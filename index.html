@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RB Sampler</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand">RB Sampler</div>
+      <div class="banks" id="banks"></div>
+      <label class="master">
+        MASTER
+        <input id="master" type="range" min="0" max="2" step="0.01" />
+        <span id="master-val"></span>
+      </label>
+      <button id="stop-all" class="danger" title="Esc">STOP ALL</button>
+      <nav>
+        <button data-tab="pads" class="active">パッド</button>
+        <button data-tab="settings">設定</button>
+        <button data-tab="monitor">MIDIモニタ</button>
+      </nav>
+    </header>
+
+    <div id="status" class="status"></div>
+    <div id="learn-banner" class="learn-banner hidden">
+      <span id="learn-text"></span>
+      <button id="learn-cancel">キャンセル</button>
+    </div>
+
+    <main>
+      <section id="tab-pads" class="tab">
+        <div class="decks">
+          <div class="deck"><h2>DECK 1</h2><div class="grid" id="deck1"></div></div>
+          <div class="deck"><h2>DECK 2</h2><div class="grid" id="deck2"></div></div>
+        </div>
+        <p class="hint">
+          クリック / キーボード（DECK1: 1-4・Q-R、DECK2: 5-8・T-I）で再生。F1-F4でバンク切替、Escで全停止。<br />
+          右クリックでパッドを選択して編集。音声ファイルをパッドへドラッグ＆ドロップで割り当て（複数ファイルは連続したパッドへ）。
+        </p>
+        <div id="editor" class="editor hidden"></div>
+      </section>
+
+      <section id="tab-settings" class="tab hidden">
+        <div class="card">
+          <h3>オーディオ出力</h3>
+          <div class="form">
+            <label>出力デバイス <select id="audio-device"></select></label>
+            <label>出力チャンネル <select id="audio-pair"></select></label>
+            <label>バッファ
+              <select id="audio-buffer">
+                <option value="">既定</option>
+                <option value="64">64</option>
+                <option value="128">128</option>
+                <option value="256">256</option>
+                <option value="512">512</option>
+                <option value="1024">1024</option>
+              </select>
+            </label>
+            <button id="audio-apply">適用</button>
+          </div>
+          <p class="sub" id="audio-info"></p>
+        </div>
+        <div class="card">
+          <h3>MIDI</h3>
+          <div class="form">
+            <label>入力 <select id="midi-in"></select></label>
+            <label>出力（LED） <select id="midi-out"></select></label>
+            <button id="midi-apply">適用</button>
+            <button id="rescan">デバイス再検索</button>
+          </div>
+          <p class="sub">rekordboxが起動しているとDDJ-RBのMIDIを開けません。先にrekordboxを終了してください。</p>
+        </div>
+        <div class="card">
+          <h3>MIDI割り当て</h3>
+          <div class="form">
+            <button data-learn-bank="0">バンクA を学習</button>
+            <button data-learn-bank="1">バンクB を学習</button>
+            <button data-learn-bank="2">バンクC を学習</button>
+            <button data-learn-bank="3">バンクD を学習</button>
+            <button id="learn-stopall">全停止 を学習</button>
+            <button id="learn-master">マスター音量（つまみ）を学習</button>
+            <button id="reset-bindings" class="danger">初期値に戻す</button>
+          </div>
+          <p class="sub">パッドの割り当ては、パッドを右クリック →「MIDI学習」で変更できます。初期値はDDJ-RBの想定値（実機未確認）です。</p>
+          <table class="bindings">
+            <thead><tr><th>機能</th><th>種類</th><th>ch</th><th>番号</th><th></th></tr></thead>
+            <tbody id="bindings"></tbody>
+          </table>
+          <p class="sub">設定ファイル: <code id="settings-path"></code></p>
+        </div>
+      </section>
+
+      <section id="tab-monitor" class="tab hidden">
+        <div class="card">
+          <h3>MIDIモニタ <button id="monitor-clear">クリア</button></h3>
+          <p class="sub">本体のボタンやパッドを押すと、受信したメッセージが表示されます（新しい順）。</p>
+          <table class="monitor">
+            <thead><tr><th>時刻</th><th>HEX</th><th>内容</th><th>割り当て</th></tr></thead>
+            <tbody id="monitor"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
